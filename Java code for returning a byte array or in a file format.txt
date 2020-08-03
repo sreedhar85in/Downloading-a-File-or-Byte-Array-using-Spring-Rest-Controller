@@ -1,0 +1,56 @@
+@PostMapping("/fetchpasstest")
+	public void getPasskit2(@RequestBody GetPassKitRequest request2, HttpServletRequest request, @RequestAttribute("traderId") Long traderId,
+			HttpServletResponse response) throws IOException, CertificateException, PKSigningException {
+		log.info("The value of the trader id is : " + traderId);
+		User user = new User();
+		
+		byte[] pkpassFile = passkitRestService.createPasskit2(user);
+		// Prepare response to start download
+				response.setStatus(200);
+				response.setContentLength(pkpassFile.length);
+				response.setContentType(PASSKIT_CONTENT_TYPE);
+				response.setHeader("Content-Disposition", "inline; filename=\"" + "Randomtestfile" + "\"");
+
+				ByteArrayInputStream bais = new ByteArrayInputStream(pkpassFile);
+
+				IOUtils.copy(bais, response.getOutputStream());
+				response.flushBuffer();
+	}
+
+
+
+
+ public byte[] createPasskit2(User user) throws CertificateException,IOException,PKSigningException   {
+    	 
+    	 
+    	 File dir = new File(filepath2);
+
+ 		FileFilter fileFilter = new WildcardFileFilter("*.zip");
+ 		File[] files = dir.listFiles(fileFilter);
+ 		int numberoffiles = files.length;
+ 		log.info("The length of the files are" + " " + numberoffiles);
+ 		
+ 		FileInputStream fis = new FileInputStream(files[0]);
+ 		byte[] bArray = IOUtils.toByteArray(fis);
+ 				
+ 		//byte[] bArray = readFileToByteArray(files[0]);
+ 		return bArray;
+    	// return files[i];
+    	// ZipFile zipFile = new ZipFile("C:\\Users\\GGPC\\Documents\\workspace-spring-tool-suite-4-4.6.0.RELEASE\\march262020\\AppleWalletProject\\src\\main\\resources\\pass.zip");
+    	 
+    	 
+   // byte[] randomfile = Files.readAllBytes(filePath);
+    //	 return zipFile;
+     }
+
+
+  @Value("${app.filepath}")
+	private String filepath;
+    
+    @Value("${app.filepath2}")
+   	private String filepath2;
+
+
+app:
+  filepath: "C:\\Users\\GGPC\\Documents\\workspace-spring-tool-suite-4-4.6.0.RELEASE\\march262020\\AppleWalletProject\\src\\main\\resources\\"
+  filepath2: "D:\\Sreedhar\\tester2\\"
